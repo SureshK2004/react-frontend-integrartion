@@ -1,0 +1,96 @@
+get -- curl --location --request GET 'https://uatbase.aivapm.com/permission_type_list?org_id=3' \
+--header 'Content-Type: text/plain' \
+--data ' {"org_id": 3,
+"location_type_id": 4,
+ "name": "Datamoo",
+ "coordinates": "5.426481,100.594398,5.426481,100.594398,5.42655,100.594296,5.42655,100.594296,5.427234,100.593835,5.427234,100.593835,5.427677,100.593582,5.427677,100.593582,5.428072,100.594275,5.428072,100.594275,5.426838,100.594989,5.426838,100.594989,5.426481,100.594409,5.426481,100.594398"}'
+
+{
+    "success": true,
+    "count": 2,
+    "data": [
+        {
+            "id": 4,
+            "name": "WFH",
+            "no_of_permission": "26",
+            "timezone_type": "date",
+            "config_type": "Monthly",
+            "created_date": "2025-02-13T06:34:04.876455Z",
+            "created_by": null,
+            "updated_by": null,
+            "updated_at": null,
+            "org_id": 3
+        },
+        {
+            "id": 5,
+            "name": "Emergency",
+            "no_of_permission": "2",
+            "timezone_type": "time",
+            "config_type": "Monthly",
+            "created_date": "2025-02-13T07:27:00.531119Z",
+            "created_by": null,
+            "updated_by": null,
+            "updated_at": null,
+            "org_id": 3
+        }
+    ]
+}
+
+post-- curl --location 'https://uatbase.aivapm.com/create_permission' \
+--header 'Content-Type: application/json' \
+--data '    {
+        
+            "permission_name": "permissiontest",
+            "no_permission": "2",
+            "time_zone": "Time",
+            "config_type": "1",
+            "org_id": 3
+        }'
+
+{
+    "success": true,
+    "message": "Permission created successfully",
+    "data": {
+        "id": 6,
+        "name": "permissiontest",
+        "no_of_permission": "2",
+        "config_type": "1",
+        "config_label": "Monthly",
+        "timezone_type": "Time",
+        "org_id": 3
+    }
+}
+
+put -- curl --location --request PUT 'https://uatbase.aivapm.com/update_permission' \
+--header 'Content-Type: application/json' \
+--data '     {
+            "id": 6,
+            "name": "Work From Home",
+            "no_of_permission": "6",
+            "time_zone": "Date",
+            "config_type": "1",
+            "org_id": 3
+        }'
+{
+    "success": true,
+    "message": "Permission updated successfully",
+    "data": {
+        "id": 6,
+        "name": "permissiontest",
+        "no_of_permission": "2",
+        "config_type": "1",
+        "config_label": "Monthly",
+        "timezone_type": "Date",
+        "org_id": 3
+    }
+}
+
+delete:
+
+curl --location --request DELETE 'https://    uatbase.aivapm.com/delete_permission?    id=14&org_id=7' \--header 'Content-Type: application/json' \--data '     {            "id": 6,            "org_id": 3        }'
+
+
+{
+    "success": true,
+    "message": "Permission deleted successfully"
+}
