@@ -1,0 +1,476 @@
+// import React from "react";
+// import { ArrowUpDown } from "lucide-react";
+// import ExportComponent from "../exportOption/exportTo";
+
+// interface Column {
+//   key: string;
+//   label: string;
+//   sortable?: boolean;
+//   render?: (row: any, index: number) => React.ReactNode;
+// }
+
+// interface TableComponentProps {
+//   tableId?: string;
+//   columns: Column[];
+//   data: any[];
+//   currentPage: number;
+//   totalPages: number;
+//   itemsPerPage: number;
+//   totalCount: number;
+//   onPageChange: (page: number) => void;
+
+//   // newly integrated
+//   onItemsPerPageChange?: (count: number) => void;
+
+//   // optional checkbox features
+//   selectable?: boolean;
+//   selectAll?: boolean;
+//   selectedRows?: Set<number>;
+//   onSelectAll?: (total: number) => void;
+//   onRowSelect?: (index: number, total: number) => void;
+
+//   // optional helpers
+//   getDepartmentColor?: (dept: string) => string;
+//   renderActionColumn?: (row: any, index: number) => React.ReactNode;
+// }
+
+// const TableComponent: React.FC<TableComponentProps> = ({
+//   tableId,
+//   columns,
+//   data,
+//   currentPage,
+//   totalPages,
+//   itemsPerPage,
+//   totalCount,
+//   onPageChange,
+//   onItemsPerPageChange,
+//   selectable = false,
+//   selectAll = false,
+//   selectedRows = new Set(),
+//   onSelectAll,
+//   onRowSelect,
+// }) => {
+//   const startIndex = (currentPage - 1) * itemsPerPage;
+//   const paginatedData = data; // already server paginated
+
+//   return (
+//     <div className="flex flex-col gap-5">
+
+//       <div className="
+//   flex flex-col md:flex-row 
+//   justify-between items-start md:items-center
+//   gap-3 px-6 py-4
+//   border-b border-gray-200 dark:border-gray-700
+// ">
+
+//         {/* Left: Limit Dropdown */}
+//         <div className="flex items-center gap-2">
+//           <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">Limit:</span>
+
+//           {onItemsPerPageChange && (
+//             <select
+//               value={itemsPerPage}
+//               onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+//               className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 
+//                    bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+//             >
+//               {[2, 5, 10, 15, 20, 25].map((n) => (
+//                 <option key={n} value={n}>{n}</option>
+//               ))}
+//             </select>
+//           )}
+//         </div>
+
+//         {/* Right: Export Buttons */}
+//         <div className="flex items-center gap-3 md:justify-end justify-start w-full md:w-auto">
+//           <ExportComponent tableId={tableId} filename={tableId} />
+//         </div>
+//       </div>
+
+
+//       <div className="bg-white-50 dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+
+
+//         <div className="overflow-x-auto">
+//           <table id={tableId} className="min-w-full" style={{ minWidth: "120%" }}>
+//             <thead>
+//               <tr className="bg-primary">
+//                 {selectable && (
+//                   <th className="px-6 py-4 text-left text-sm font-semibold text-white whitespace-nowrap">
+//                     <div className="flex items-center gap-2">
+//                       <input
+//                         type="checkbox"
+//                         checked={selectAll}
+//                         onChange={() => onSelectAll && onSelectAll(data.length)}
+//                         className="w-4 h-4 text-white border-white bg-primary"
+//                       />
+//                       <span className="text-sm text-white">Select</span>
+//                     </div>
+//                   </th>
+//                 )}
+
+//                 {columns.map((column) => (
+//                   <th
+//                     key={column.key}
+//                     className="px-6 py-4 text-left text-sm font-semibold text-white whitespace-nowrap"
+//                   >
+//                     <div className="flex items-center gap-2">
+//                       <span>{column.label}</span>
+//                       {column.sortable && <ArrowUpDown className="w-4 h-4 text-white" />}
+//                     </div>
+//                   </th>
+//                 ))}
+//               </tr>
+//             </thead>
+
+//             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+//               {paginatedData.length === 0 ? (
+//                 <tr>
+//                   <td
+//                     colSpan={columns.length + (selectable ? 1 : 0)}
+//                     className="text-center py-8 text-gray-500 dark:text-gray-400"
+//                   >
+//                     No records found
+//                   </td>
+//                 </tr>
+//               ) : (
+//                 paginatedData.map((row, index) => (
+//                   <tr
+//                     key={index}
+//                     className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+//                   >
+//                     {selectable && (
+//                       <td className="px-6 py-4">
+//                         <input
+//                           type="checkbox"
+//                           checked={selectedRows.has(startIndex + index)}
+//                           onChange={() =>
+//                             onRowSelect &&
+//                             onRowSelect(startIndex + index, data.length)
+//                           }
+//                           className="w-4 h-4 border-gray-300"
+//                         />
+//                       </td>
+//                     )}
+
+//                     {columns.map((col) => (
+//                       <td key={col.key} className="px-6 py-4 text-gray-700 dark:text-gray-300">
+//                         {col.render
+//                           ? col.render(row, startIndex + index)
+//                           : row[col.key]}
+//                       </td>
+//                     ))}
+//                   </tr>
+//                 ))
+//               )}
+//             </tbody>
+//           </table>
+//         </div>
+
+//         {/* Pagination */}
+//         {totalPages > 1 && (
+//           <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+
+
+//             <div className="text-sm text-gray-600 dark:text-gray-400">
+//               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+//               {(currentPage - 1) * itemsPerPage + paginatedData.length} of{" "}
+//               {totalCount} entries
+//             </div>
+
+//             <div className="flex items-center gap-2">
+
+//               <button
+//                 onClick={() => onPageChange(currentPage - 1)}
+//                 disabled={currentPage === 1}
+//                 className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === 1
+//                   ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+//                   : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+//                   }`}
+//               >
+//                 Previous
+//               </button>
+
+
+//               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+//                 <button
+//                   key={page}
+//                   onClick={() => onPageChange(page)}
+//                   className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === page
+//                     ? "bg-primary text-white"
+//                     : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+//                     }`}
+//                 >
+//                   {page}
+//                 </button>
+//               ))}
+
+//               <button
+//                 onClick={() => onPageChange(currentPage + 1)}
+//                 disabled={currentPage === totalPages}
+//                 className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === totalPages
+//                   ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+//                   : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+//                   }`}
+//               >
+//                 Next
+//               </button>
+
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TableComponent;
+
+
+//new table scroll behaviour code 
+
+import React from "react";
+import { ArrowUpDown } from "lucide-react";
+import ExportComponent from "../exportOption/exportTo";
+
+interface Column {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  render?: (row: any, index: number) => React.ReactNode;
+}
+
+interface TableComponentProps {
+  tableId?: string;
+  columns: Column[];
+  data: any[];
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  totalCount: number;
+  onPageChange: (page: number) => void;
+
+  // newly integrated
+  onItemsPerPageChange?: (count: number) => void;
+
+  // optional checkbox features
+  selectable?: boolean;
+  selectAll?: boolean;
+  selectedRows?: Set<number>;
+  onSelectAll?: (total: number) => void;
+  onRowSelect?: (index: number, total: number) => void;
+
+  // optional helpers
+  getDepartmentColor?: (dept: string) => string;
+  renderActionColumn?: (row: any, index: number) => React.ReactNode;
+}
+
+const TableComponent: React.FC<TableComponentProps> = ({
+  tableId,
+  columns,
+  data,
+  currentPage,
+  totalPages,
+  itemsPerPage,
+  totalCount,
+  onPageChange,
+  onItemsPerPageChange,
+  selectable = false,
+  selectAll = false,
+  selectedRows = new Set(),
+  onSelectAll,
+  onRowSelect,
+}) => {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = data; // already server paginated
+
+  return (
+    <div className="flex flex-col gap-5">
+
+      <div className="
+  flex flex-col md:flex-row 
+  justify-between items-start md:items-center
+  gap-3 px-6 py-4
+  border-b border-gray-200 dark:border-gray-700
+">
+
+        {/* Left: Limit Dropdown */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">Limit:</span>
+
+          {onItemsPerPageChange && (
+            <select
+              value={itemsPerPage}
+              onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 
+                   bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+            >
+              {[2, 5, 10, 15, 20, 25].map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        {/* Right: Export Buttons */}
+        <div className="flex items-center gap-3 md:justify-end justify-start w-full md:w-auto">
+          <ExportComponent tableId={tableId} filename={tableId} />
+        </div>
+      </div>
+
+
+      <div className="bg-white-50 dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+
+
+        <div className="overflow-x-auto">
+          <table id={tableId} className="min-w-full" style={{ minWidth: "120%" }}>
+            <thead>
+              <tr className="bg-primary">
+                {selectable && (
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-white whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={() => onSelectAll && onSelectAll(data.length)}
+                        className="w-4 h-4 text-white border-white bg-primary"
+                      />
+                      <span className="text-sm text-white">Select</span>
+                    </div>
+                  </th>
+                )}
+
+                {columns.map((column, colIndex) => (
+                  <th
+                    key={column.key}
+                    className={`
+      px-6 py-4 text-left text-sm font-semibold whitespace-nowrap
+      ${colIndex === 0 ? "sticky left-0 z-20 bg-primary" : ""}
+      ${colIndex === 1 ? "sticky left-40 z-20 bg-primary" : ""}
+      ${colIndex === 2 ? "sticky left-80 z-20 bg-primary" : ""}
+      text-white
+    `}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{column.label}</span>
+                      {column.sortable && <ArrowUpDown className="w-4 h-4 text-white" />}
+                    </div>
+                  </th>
+                ))}
+
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + (selectable ? 1 : 0)}
+                    className="text-center py-8 text-gray-500 dark:text-gray-400"
+                  >
+                    No records found
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((row, index) => (
+                  <tr
+                    key={index}
+                    className="bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    {selectable && (
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.has(startIndex + index)}
+                          onChange={() =>
+                            onRowSelect &&
+                            onRowSelect(startIndex + index, data.length)
+                          }
+                          className="w-4 h-4 border-gray-300"
+                        />
+                      </td>
+                    )}
+
+                    {columns.map((col, colIndex) => (
+                      <td
+                        key={col.key}
+                        className={`
+      px-6 py-4 whitespace-nowrap 
+      text-gray-700 dark:text-gray-300
+      ${colIndex === 0 ? "sticky left-0 z-10 bg-gray-50 dark:bg-gray-900" : ""}
+      ${colIndex === 1 ? "sticky left-40 z-10 bg-gray-50 dark:bg-gray-900" : ""}
+      ${colIndex === 2 ? "sticky left-80 z-10  bg-gray-50 dark:bg-gray-900" : ""}
+    `}
+                      >
+                        {col.render ? col.render(row, index) : row[col.key]}
+                      </td>
+                    ))}
+
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+
+
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {(currentPage - 1) * itemsPerPage + paginatedData.length} of{" "}
+              {totalCount} entries
+            </div>
+
+            <div className="flex items-center gap-2">
+
+              <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === 1
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                  }`}
+              >
+                Previous
+              </button>
+
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => onPageChange(page)}
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === page
+                    ? "bg-primary text-white"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${currentPage === totalPages
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                  }`}
+              >
+                Next
+              </button>
+
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TableComponent;
+
+
+
